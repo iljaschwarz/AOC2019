@@ -2,7 +2,7 @@ mod days;
 
 use std::env;
 
-use days::{day01, day02, day03};
+use days::{day01, day02, day03, day04};
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -20,8 +20,8 @@ fn get_day(day: &str, part: &str) -> Box<dyn Fn() -> String> {
         "22" => Box::new(day02::part2),
         "31" => Box::new(day03::part1),
         "32" => Box::new(day03::part2),
-        "41" => panic!("Day not found"),
-        "42" => panic!("Day not found"),
+        "41" => Box::new(day04::part1),
+        "42" => Box::new(day04::part2),
         "51" => panic!("Day not found"),
         "52" => panic!("Day not found"),
         "61" => panic!("Day not found"),
