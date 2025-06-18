@@ -2,6 +2,7 @@ mod days;
 
 use std::env;
 
+use crate::days::day06;
 use days::{day01, day02, day03, day04, day05};
 
 fn main() {
@@ -24,8 +25,8 @@ fn get_day(day: &str, part: &str) -> Box<dyn Fn() -> String> {
         "42" => Box::new(day04::part2),
         "51" => Box::new(day05::part1),
         "52" => Box::new(day05::part2),
-        "61" => panic!("Day not found"),
-        "62" => panic!("Day not found"),
+        "61" => Box::new(day06::part1),
+        "62" => Box::new(day06::part2),
         "71" => panic!("Day not found"),
         "72" => panic!("Day not found"),
         "81" => panic!("Day not found"),
