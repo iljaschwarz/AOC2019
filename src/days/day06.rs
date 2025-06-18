@@ -21,22 +21,12 @@ pub fn part2() -> String {
     let map = generate_map(input);
     let you = generate_parents(&String::from("YOU"), &map);
     let san = generate_parents(&String::from("SAN"), &map);
-
-    let mut result = 0;
-    if let Some((pos, _)) = you.iter().enumerate().find_map(|(pos, parent)| {
-        san.iter().enumerate().find_map(|(pos2, parent2)| {
-            if parent == parent2 {
-                Some((pos + pos2, ()))
-            } else {
-                None
-            }
-        })
-    }) {
-        result = pos;
-    }
-
-    result.to_string()
+    
+    let common = you.iter().position(|orbit| san.contains(orbit)).unwrap();
+    let count = common + san.iter().position(|orbit| *orbit == you[common]).unwrap();
+    count.to_string()
 }
+
 fn generate_parents(child: &String, map: &HashMap<String, String>) -> Vec<String> {
     let mut parents: Vec<String> = Vec::new();
     let mut child = child;
@@ -46,6 +36,7 @@ fn generate_parents(child: &String, map: &HashMap<String, String>) -> Vec<String
     }
     parents
 }
+
 fn generate_map(input: String) -> HashMap<String, String> {
     let mut map = HashMap::new();
     input.lines().for_each(|line| {
