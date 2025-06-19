@@ -7,7 +7,7 @@ pub fn part1() -> String {
         let num = line.parse::<u32>().unwrap() / 3 - 2;
         result += num;
     });
-    return format!("{}", result);
+    format!("{}", result)
 }
 pub fn part2() -> String {
     let input = utils::read_input(1);
@@ -21,5 +21,5 @@ pub fn part2() -> String {
         }
         result += inner_result;
     });
-    return format!("{}", result);
+    format!("{}", result)
 }

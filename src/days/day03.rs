@@ -1,8 +1,5 @@
 use crate::days::utils;
-use std::{
-    collections::{HashMap, HashSet},
-    u32,
-};
+use std::collections::{HashMap, HashSet};
 
 pub fn part1() -> String {
     let input = utils::read_input(3);
@@ -10,12 +7,12 @@ pub fn part1() -> String {
     let first_line = lines.next().unwrap();
     let second_line = lines.next().unwrap();
 
-    let grid = walk_the_grid(&first_line);
+    let grid = walk_the_grid(first_line);
     let mut hashset = HashSet::new();
     grid.keys().for_each(|key| {
         hashset.insert(key);
     });
-    let grid2 = walk_the_grid(&second_line);
+    let grid2 = walk_the_grid(second_line);
     let mut hashset2 = HashSet::new();
     grid2.keys().for_each(|key| {
         hashset2.insert(key);
@@ -31,7 +28,7 @@ pub fn part1() -> String {
         }
     }
 
-    return result.to_string();
+    result.to_string()
 }
 
 pub fn part2() -> String {
@@ -40,12 +37,12 @@ pub fn part2() -> String {
     let first_line = lines.next().unwrap();
     let second_line = lines.next().unwrap();
 
-    let grid = walk_the_grid(&first_line);
+    let grid = walk_the_grid(first_line);
     let mut hashset = HashSet::new();
     grid.keys().for_each(|key| {
         hashset.insert(key);
     });
-    let grid2 = walk_the_grid(&second_line);
+    let grid2 = walk_the_grid(second_line);
     let mut hashset2 = HashSet::new();
     grid2.keys().for_each(|key| {
         hashset2.insert(key);
@@ -59,7 +56,7 @@ pub fn part2() -> String {
         }
     }
 
-    return result.to_string();
+    result.to_string()
 }
 
 fn walk_the_grid(line: &str) -> HashMap<String, u32> {
@@ -69,7 +66,7 @@ fn walk_the_grid(line: &str) -> HashMap<String, u32> {
     let mut distance = 0;
     for drive in line.split(",") {
         let steps = drive[1..].parse::<u32>().unwrap();
-        match drive.chars().nth(0).unwrap().to_string().as_str() {
+        match drive.chars().next().unwrap().to_string().as_str() {
             "R" => {
                 for _ in 0..steps {
                     distance += 1;
@@ -110,5 +107,5 @@ fn walk_the_grid(line: &str) -> HashMap<String, u32> {
             _ => panic!("Should not be possible"),
         }
     }
-    return grid;
+    grid
 }

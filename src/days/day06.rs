@@ -21,7 +21,7 @@ pub fn part2() -> String {
     let map = generate_map(input);
     let you = generate_parents(&String::from("YOU"), &map);
     let san = generate_parents(&String::from("SAN"), &map);
-    
+
     let common = you.iter().position(|orbit| san.contains(orbit)).unwrap();
     let count = common + san.iter().position(|orbit| *orbit == you[common]).unwrap();
     count.to_string()

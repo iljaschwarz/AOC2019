@@ -1,5 +1,3 @@
-use std::usize;
-
 use crate::days::utils;
 
 pub fn part1() -> String {
@@ -9,7 +7,7 @@ pub fn part1() -> String {
         .map(|num| num.parse::<i32>().unwrap())
         .collect::<Vec<i32>>();
     let (_, result) = computer(intcode, 1);
-    return result.last().unwrap().clone();
+    result.last().unwrap().clone()
 }
 
 pub fn part2() -> String {
@@ -19,7 +17,7 @@ pub fn part2() -> String {
         .map(|num| num.parse::<i32>().unwrap())
         .collect::<Vec<i32>>();
     let (_, result) = computer(intcode, 5);
-    return result.last().unwrap().clone();
+    result.last().unwrap().clone()
 }
 pub fn computer(mut intcode: Vec<i32>, input_id: i32) -> (Vec<i32>, Vec<String>) {
     let mut result = vec![];
@@ -157,5 +155,5 @@ pub fn computer(mut intcode: Vec<i32>, input_id: i32) -> (Vec<i32>, Vec<String>)
             _ => panic!("Should not happen"),
         }
     }
-    return (intcode, result);
+    (intcode, result)
 }

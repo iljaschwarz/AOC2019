@@ -9,7 +9,7 @@ fn main() {
     let args: Vec<String> = env::args().collect();
     let day = &args[1];
     let part = &args[2];
-    let result = get_day(&day, &part)();
+    let result = get_day(day, part)();
     println!("{}", result);
 }
 

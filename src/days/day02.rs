@@ -24,7 +24,7 @@ pub fn part1() -> String {
         }
         pos += 4
     }
-    return intcode[0].to_string();
+    intcode[0].to_string()
 }
 
 pub fn part2() -> String {
@@ -60,5 +60,5 @@ pub fn part2() -> String {
             }
         }
     }
-    return result.to_string();
+    result.to_string()
 }
