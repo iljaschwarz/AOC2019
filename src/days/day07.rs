@@ -1,4 +1,4 @@
-use crate::computer::Computer;
+use crate::computer::{Computer, ComputerState};
 use crate::days::utils;
 use itertools::Itertools;
 
@@ -26,22 +26,42 @@ pub fn part1() -> String {
 }
 
 pub fn part2() -> String {
-    let perm = vec![9, 8, 7, 6, 5];
+    let permutations = vec![9, 8, 7, 6, 5];
     let input = utils::read_input(7);
-    let result = 0;
-    let mut curr_result = 0;
-    let mut comps = vec![];
+    let mut max = 0;
+
+    for perm in permutations
+        .iter()
+        .permutations(permutations.len())
+        .unique()
     {
-        println!("{:?}", perm);
-        for x in perm.iter() {
-            // setup initial computer states
+        let mut comps = vec![];
+        let mut curr_result = 0;
+        for x in perm {
             let mut comp = Computer::new(input.clone(), vec![curr_result, x.clone()]);
             curr_result = comp.compute().get_result().parse().unwrap();
             comps.push(comp);
         }
-        for comp in comps.iter() {
-            
+        loop {
+            let mut result = ComputerState {
+                result: "".to_string(),
+                halted: false,
+            };
+            for comp in comps.iter_mut() {
+                comp.push_input(curr_result);
+                result = comp.compute();
+                if result.is_halted() {
+                    break;
+                }
+                curr_result = result.get_result().parse().unwrap();
+            }
+            if result.is_halted() {
+                break;
+            }
+        }
+        if max < curr_result {
+            max = curr_result;
         }
     }
-    result.to_string()
+    max.to_string()
 }

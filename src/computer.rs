@@ -7,9 +7,10 @@ pub struct Computer {
     pos: usize,
     halted: bool,
 }
+#[derive(Debug)]
 pub struct ComputerState {
-    result: String,
-    halted: bool,
+    pub(crate) result: String,
+    pub(crate) halted: bool,
 }
 
 impl ComputerState {
