@@ -5,6 +5,7 @@ pub struct Computer {
     intcode: Vec<i32>,
     input_id: Vec<i32>,
     pos: usize,
+    relative_base: usize,
     halted: bool,
 }
 #[derive(Debug)]
@@ -28,6 +29,7 @@ impl Computer {
             intcode: get_intcode_from_str(input),
             input_id,
             pos: 0,
+            relative_base: 0,
             halted: false,
         }
     }
@@ -200,6 +202,17 @@ impl Computer {
     }
 }
 
+enum OpCode{
+    Add,
+    Multiply,
+    Input,
+    Output,
+    JumpIfTrue,
+    JumpIfFalse,
+    LessThan,
+    Equals,
+    Halt,
+}
 pub fn get_intcode_from_str(input: String) -> Vec<i32> {
     input
         .split(",")
