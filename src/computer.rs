@@ -1,4 +1,4 @@
-#! [allow(unused)]
+#![allow(unused)]
 
 #[derive(Debug)]
 pub struct Computer {
@@ -41,60 +41,59 @@ impl Computer {
         loop {
             let state = self.compute();
             if state.is_halted() {
-                return result
+                return result;
             }
             result.push(state.get_result());
         }
     }
+    fn get_operand(&mut self, a: Mode, b: Mode) -> (i32, i32) {
+        let op1 = match a {
+            Mode::Position => self.intcode[self.pos + 1],
+            Mode::Position => self.intcode[self.intcode[self.pos + 1] as usize],
+            _ => panic!("Not Implemented Mode {:?}", a),
+        };
+        let op2 = match b {
+            Mode::Position => self.intcode[self.pos + 2],
+            Mode::Position => self.intcode[self.intcode[self.pos + 2] as usize],
+            _ => panic!("Not Implemented Mode {:?}", b),
+        };
+        (op1, op2)
+    }
+    fn math(&mut self, a: Mode, b: Mode, op: &str) {
+        let (op1, op2) = self.get_operand(a, b);
+        let to = self.intcode[self.pos + 3] as usize;
+        self.intcode[to] = match op {
+            "+" => op1 + op2,
+            "*" => op1 * op2,
+            _ => panic!("Not Implemented Mode {:?}", op),
+        };
+        self.pos += 4
+    }
+
     pub fn compute(&mut self) -> ComputerState {
-        if(self.halted) {
+        if (self.halted) {
             return ComputerState {
                 result: "HALTED".to_string(),
                 halted: true,
             };
         }
-        while self.intcode[self.pos] != 99 {
-            let opcode = self.intcode[self.pos];
-            let a = opcode % 10;
-            //let b = opcode / 10 % 10;
-            let c = (opcode / 100 % 10) == 1;
-            let d = (opcode / 1000 % 10) == 1;
-            //let e = (opcode / 10000 % 10) == 1;
-            match a {
-                1 => {
-                    let op1 = if c {
-                        self.intcode[self.pos + 1]
-                    } else {
-                        self.intcode[self.intcode[self.pos + 1] as usize]
-                    };
-                    let op2 = if d {
-                        self.intcode[self.pos + 2]
-                    } else {
-                        self.intcode[self.intcode[self.pos + 2] as usize]
-                    };
+        while !self.halted {
+            let opcode = get_opcode(self.intcode[self.pos]);
 
-                    let to = self.intcode[self.pos + 3] as usize;
-                    self.intcode[to] = op1 + op2;
-                    self.pos += 4
+            match opcode {
+                OpCode::Add(a, b) => {
+                    self.math(a, b, "+");
                 }
-
-                2 => {
-                    let op1 = if c {
-                        self.intcode[self.pos + 1]
-                    } else {
-                        self.intcode[self.intcode[self.pos + 1] as usize]
-                    };
-                    let op2 = if d {
-                        self.intcode[self.pos + 2]
-                    } else {
-                        self.intcode[self.intcode[self.pos + 2] as usize]
-                    };
-
-                    let to = self.intcode[self.pos + 3] as usize;
-                    self.intcode[to] = op1 * op2;
-                    self.pos += 4
+                OpCode::Multiply(a, b) => {
+                    self.math(a, b, "*");
                 }
-
+                OpCode::Input=>{},
+                OpCode::Output=>{},
+                OpCode::JumpIfTrue=>{},
+                OpCode::JumpIfFalse=>{},
+                OpCode::LessThan=>{},
+                OpCode::Equals=>{},
+                OpCode::Halt=>{},
                 3 => {
                     let to = self.intcode[self.pos + 1] as usize;
                     self.intcode[to] = self.input_id.pop().unwrap();
@@ -190,21 +189,28 @@ impl Computer {
 
                     self.pos += 4
                 }
-
+                99 => {
+                    self.halted = true;
+                    break;
+                }
                 _ => panic!("Should not happen"),
             }
         }
-        self.halted = true;
         ComputerState {
             result: "HALTED".to_string(),
             halted: true,
         }
     }
 }
-
-enum OpCode{
-    Add,
-    Multiply,
+#[derive(Debug)]
+enum Mode {
+    Position,
+    Immediate,
+    Relative,
+}
+enum OpCode {
+    Add(Mode, Mode),
+    Multiply(Mode, Mode),
     Input,
     Output,
     JumpIfTrue,
@@ -213,6 +219,42 @@ enum OpCode{
     Equals,
     Halt,
 }
+fn get_opcode(opcode: i32) -> OpCode {
+    let a = opcode % 100;
+    //let b = opcode / 10 % 10;
+    let c = (opcode / 100 % 10);
+    let d = (opcode / 1000 % 10);
+    let e = (opcode / 10000 % 10);
+
+    let mode_a = get_mode(c);
+    let mode_b = get_mode(d);
+    let _mode_c = get_mode(e);
+
+    match a {
+        1 => OpCode::Add(mode_a, mode_b),
+        2 => OpCode::Multiply(mode_a, mode_b),
+        3 => OpCode::Input,
+        4 => OpCode::Output,
+        5 => OpCode::JumpIfTrue,
+        6 => OpCode::JumpIfFalse,
+        7 => OpCode::LessThan,
+        8 => OpCode::Equals,
+        99 => OpCode::Halt,
+        _ => {
+            panic!("Should not happen")
+        }
+    }
+}
+
+fn get_mode(c: i32) -> Mode {
+    match c {
+        1 => Mode::Position,
+        2 => Mode::Immediate,
+        3 => Mode::Relative,
+        _ => panic!(),
+    }
+}
+
 pub fn get_intcode_from_str(input: String) -> Vec<i32> {
     input
         .split(",")
